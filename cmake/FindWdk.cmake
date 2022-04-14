@@ -184,7 +184,11 @@ function(wdk_add_driver _target)
     endif()
 
     if(DEFINED WDK_CUSTOM_ENTRY_POINT)
-        set_property(TARGET ${_target} APPEND_STRING PROPERTY LINK_FLAGS "/ENTRY:${WDK_CUSTOM_ENTRY_POINT}")
+        if(CMAKE_SIZEOF_VOID_P EQUAL 4)
+            set_property(TARGET ${_target} APPEND_STRING PROPERTY LINK_FLAGS "/ENTRY:${WDK_CUSTOM_ENTRY_POINT}@8")
+        elseif(CMAKE_SIZEOF_VOID_P  EQUAL 8)
+            set_property(TARGET ${_target} APPEND_STRING PROPERTY LINK_FLAGS "/ENTRY:${WDK_CUSTOM_ENTRY_POINT}")
+        endif()
     elseif(DEFINED WDK_KMDF)
         target_include_directories(${_target} SYSTEM PRIVATE "${WDK_ROOT}/Include/wdf/kmdf/${WDK_KMDF}")
         target_link_libraries(${_target}
